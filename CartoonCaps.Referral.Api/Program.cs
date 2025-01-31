@@ -1,13 +1,12 @@
+using CartoonCaps.Referral.Api;
+using CartoonCaps.Referral.Api.Services;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
 
 builder.Services.AddOpenApi("v1");
-builder.Services.AddOpenApi("v2");
 
 builder.Services.AddApiVersioning(options =>
     {
@@ -18,6 +17,9 @@ builder.Services.AddApiVersioning(options =>
         options.GroupNameFormat = "'v'VVV";
         options.SubstituteApiVersionInUrl = true;
     });
+
+builder.Services.AddTransient<IReferralsService, ReferralsService>();
+builder.Services.AddTransient<IUserService, UserService>();
 
 var app = builder.Build();
 
@@ -33,4 +35,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

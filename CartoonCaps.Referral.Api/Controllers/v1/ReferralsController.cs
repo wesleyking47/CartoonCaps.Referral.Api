@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using CartoonCaps.Referral.Api.Services;
+using CartoonCaps.Referral.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CartoonCaps.Referral.Api.Controllers.v1;
@@ -13,14 +14,16 @@ public class ReferralsController(IReferralsService referralsService, IUserServic
     private readonly IUserService _userService = userService;
 
     [HttpPost]
-    [Route("{userId}/code")]
+    [Route("code")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public IActionResult CreateCode([FromRoute] string userId)
+    public IActionResult CreateCode([FromBody] CreateCodeRequest request)
     {
         try
         {
+            var userId = request.UserId;
+
             var userExists = _userService.Exists(userId);
             if (!userExists)
             {
@@ -28,22 +31,18 @@ public class ReferralsController(IReferralsService referralsService, IUserServic
             }
 
             var code = _referralsService.CreateCode(userId);
-            if (code == null)
-            {
-                return BadRequest();
-            }
 
-            return Created($"/referrals/{userId}/code", userId);
+            return CreatedAtAction(nameof(GetCode), new { userId }, code);
         }
         catch
         {
-            return StatusCode(StatusCodes.Status500InternalServerError);
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occured while creating the referral code.");
         }
     }
 
     [HttpGet]
     [Route("{userId}/code")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public IActionResult GetCode([FromRoute] string userId)
@@ -53,14 +52,24 @@ public class ReferralsController(IReferralsService referralsService, IUserServic
             var code = _referralsService.GetCode(userId);
             if (code == null)
             {
-                return NotFound();
+                return NotFound("Referral code not found.");
             }
 
             return Ok(code);
         }
         catch
         {
-            return StatusCode(StatusCodes.Status500InternalServerError);
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occured while getting the referral code.");
         }
+    }
+
+    [HttpGet]
+    [Route("{userId}/status")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public IActionResult GetReferralStatus([FromRoute] string userId)
+    {
+        return Ok();
     }
 }

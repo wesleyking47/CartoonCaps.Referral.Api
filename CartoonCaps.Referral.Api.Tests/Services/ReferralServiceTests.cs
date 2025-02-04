@@ -110,7 +110,7 @@ public class ReferralServiceTests
 
     [Theory]
     [AutoDomainData]
-    public async Task GivenValidReferralCodeAndValidRefferedUserId_WhenCreateReferralRecord_ThenSaveRecord(
+    public async Task GivenValidReferralCodeAndValidReferredUserId_WhenCreateReferralRecord_ThenSaveRecord(
         [Frozen] Mock<IUserService> userServiceMock,
         [Frozen] Mock<IReferralRepository> referralRepositoryMock,
         CreateReferralRecordRequest request,
@@ -151,7 +151,7 @@ public class ReferralServiceTests
 
     [Theory]
     [AutoDomainData]
-    public async Task GivenAValidReferralCodeAndAnInvalidRefferedUserId_WhenCreateReferralRecord_ThenThrowArgumentException(
+    public async Task GivenAValidReferralCodeAndAnInvalidReferredUserId_WhenCreateReferralRecord_ThenThrowArgumentException(
         [Frozen] Mock<IUserService> userServiceMock,
         [Frozen] Mock<IReferralRepository> referralRepositoryMock,
         CreateReferralRecordRequest request,
@@ -182,7 +182,7 @@ public class ReferralServiceTests
             new ReferralRecord
             {
                 ReferralStatus = x.ReferralStatus,
-                ReferryName = x.ReferryName
+                RefereeName = x.RefereeName
             });
         Assert.Equivalent(expectedReferralRecords, result);
     }

@@ -89,7 +89,7 @@ namespace CartoonCaps.Referral.Api.Tests.Controllers.v1
             var objectResult = result as ObjectResult;
             Assert.NotNull(objectResult);
             Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
-            Assert.Equal("An error occured while creating the referral code.", objectResult.Value);
+            Assert.Equal("An error occurred while creating the referral code.", objectResult.Value);
         }
 
         [Theory]
@@ -144,7 +144,7 @@ namespace CartoonCaps.Referral.Api.Tests.Controllers.v1
             var objectResult = result as ObjectResult;
             Assert.NotNull(objectResult);
             Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
-            Assert.Equal("An error occured while getting the referral code.", objectResult.Value);
+            Assert.Equal("An error occurred while getting the referral code.", objectResult.Value);
         }
 
 
@@ -200,7 +200,7 @@ namespace CartoonCaps.Referral.Api.Tests.Controllers.v1
             var objectResult = result as ObjectResult;
             Assert.NotNull(objectResult);
             Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
-            Assert.Equal("An error occured while getting the referral details.", objectResult.Value);
+            Assert.Equal("An error occurred while getting the referral details.", objectResult.Value);
         }
 
         [Theory]
@@ -258,7 +258,7 @@ namespace CartoonCaps.Referral.Api.Tests.Controllers.v1
             var objectResult = result as ObjectResult;
             Assert.NotNull(objectResult);
             Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
-            Assert.Equal("An error occured while creating the referral record.", objectResult.Value);
+            Assert.Equal("An error occurred while creating the referral record.", objectResult.Value);
         }
 
     }

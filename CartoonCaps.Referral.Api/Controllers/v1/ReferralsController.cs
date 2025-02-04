@@ -36,7 +36,7 @@ public class ReferralsController(IReferralService referralsService) : Controller
         }
         catch
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, "An error occured while creating the referral code.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the referral code.");
         }
     }
 
@@ -59,7 +59,7 @@ public class ReferralsController(IReferralService referralsService) : Controller
         }
         catch
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, "An error occured while getting the referral code.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting the referral code.");
         }
     }
 
@@ -82,7 +82,7 @@ public class ReferralsController(IReferralService referralsService) : Controller
         }
         catch
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, "An error occured while getting the referral details.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting the referral details.");
         }
     }
 
@@ -105,7 +105,7 @@ public class ReferralsController(IReferralService referralsService) : Controller
         }
         catch
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, "An error occured while creating the referral record.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the referral record.");
         }
     }
 }

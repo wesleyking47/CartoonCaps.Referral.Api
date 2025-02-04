@@ -69,7 +69,7 @@ public class ReferralService(IReferralCodeGenerator referralCodeGenerator, IRefe
         var records = recordsData?.Select(x =>
             new ReferralRecord
             {
-                ReferryName = x.ReferryName,
+                RefereeName = x.RefereeName,
                 ReferralStatus = x.ReferralStatus
             }) ?? [];
         return records;

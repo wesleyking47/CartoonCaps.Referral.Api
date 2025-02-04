@@ -8,4 +8,5 @@ public interface IReferralRepository
     Task<string?> GetCodeAsync(string userId);
     Task SaveReferralRecordAsync(CreateReferralRecordDataRequest createReferralRecordDataRequest);
     Task<IEnumerable<ReferralDataRecord>?> GetReferralRecordsAsync(string userId);
+    Task<string?> GetUserIdByReferralCodeAsync(string code);
 }

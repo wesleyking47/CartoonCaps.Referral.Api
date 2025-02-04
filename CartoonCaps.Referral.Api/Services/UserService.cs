@@ -1,16 +1,18 @@
 ﻿
 
+using CartoonCaps.Referral.Api.Repositories;
+
 namespace CartoonCaps.Referral.Api.Services;
 
-public class UserService : IUserService
+public class UserService(IUserRepository userRepository) : IUserService
 {
-    public Task<string?> GetUserIdByReferralCodeAsync(string code)
-    {
-        throw new NotImplementedException();
-    }
+    private readonly IUserRepository _userRepository = userRepository;
 
-    public Task<bool> ValidateUserIdAsync(string userId)
+    public async Task<bool> ValidateUserIdAsync(string userId)
     {
-        throw new NotImplementedException();
+        var user = await _userRepository.GetUserAsync(userId);
+
+        var userExists = user != null;
+        return userExists;
     }
 }

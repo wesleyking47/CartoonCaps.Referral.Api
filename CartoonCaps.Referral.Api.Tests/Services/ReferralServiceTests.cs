@@ -119,7 +119,7 @@ public class ReferralServiceTests
     )
     {
         userServiceMock.Setup(x => x.ValidateUserIdAsync(request.UserId)).ReturnsAsync(true);
-        userServiceMock.Setup(x => x.GetUserIdByReferralCodeAsync(request.ReferralCode)).ReturnsAsync(referringUserId);
+        referralRepositoryMock.Setup(x => x.GetUserIdByReferralCodeAsync(request.ReferralCode)).ReturnsAsync(referringUserId);
 
         await service.CreateReferralRecordAsync(request);
 
@@ -139,12 +139,12 @@ public class ReferralServiceTests
     [Theory]
     [AutoDomainData]
     public async Task GivenInvalidReferralCode_WhenCreateReferralRecord_ThenThrowArgumentException(
-        [Frozen] Mock<IUserService> userServiceMock,
+        [Frozen] Mock<IReferralRepository> referralRepositoryMock,
         CreateReferralRecordRequest request,
         ReferralService service
     )
     {
-        userServiceMock.Setup(x => x.GetUserIdByReferralCodeAsync(request.ReferralCode)).ReturnsAsync(null as string);
+        referralRepositoryMock.Setup(x => x.GetUserIdByReferralCodeAsync(request.ReferralCode)).ReturnsAsync(null as string);
 
         await Assert.ThrowsAsync<ArgumentException>(() => service.CreateReferralRecordAsync(request));
     }
@@ -153,12 +153,13 @@ public class ReferralServiceTests
     [AutoDomainData]
     public async Task GivenAValidReferralCodeAndAnInvalidRefferedUserId_WhenCreateReferralRecord_ThenThrowArgumentException(
         [Frozen] Mock<IUserService> userServiceMock,
+        [Frozen] Mock<IReferralRepository> referralRepositoryMock,
         CreateReferralRecordRequest request,
         ReferralService service,
         string referringUserId
     )
     {
-        userServiceMock.Setup(x => x.GetUserIdByReferralCodeAsync(request.ReferralCode)).ReturnsAsync(referringUserId);
+        referralRepositoryMock.Setup(x => x.GetUserIdByReferralCodeAsync(request.ReferralCode)).ReturnsAsync(referringUserId);
         userServiceMock.Setup(x => x.ValidateUserIdAsync(request.UserId)).ReturnsAsync(false);
 
         await Assert.ThrowsAsync<ArgumentException>(() => service.CreateReferralRecordAsync(request));

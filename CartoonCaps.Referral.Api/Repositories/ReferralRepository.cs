@@ -14,6 +14,11 @@ public class ReferralRepository : IReferralRepository
         throw new NotImplementedException();
     }
 
+    public Task<string?> GetUserIdByReferralCodeAsync(string code)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<bool> SaveCodeAsync(string userId, string code)
     {
         throw new NotImplementedException();

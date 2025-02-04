@@ -40,7 +40,7 @@ public class ReferralService(IReferralCodeGenerator referralCodeGenerator, IRefe
 
     public async Task CreateReferralRecordAsync(CreateReferralRecordRequest record)
     {
-        var referringUserId = await _userService.GetUserIdByReferralCodeAsync(record.ReferralCode);
+        var referringUserId = await _referralRepository.GetUserIdByReferralCodeAsync(record.ReferralCode);
         if (referringUserId == null)
         {
             throw new ArgumentException($"Invalid referral code: {record.ReferralCode}");

@@ -1,9 +1,16 @@
-﻿namespace CartoonCaps.Referral.Api.Services;
+﻿
+
+namespace CartoonCaps.Referral.Api.Services;
 
 public class UserService : IUserService
 {
-    public bool Exists(string userId)
+    public Task<string?> GetUserIdByReferralCodeAsync(string code)
     {
-        return true;
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> ValidateUserIdAsync(string userId)
+    {
+        throw new NotImplementedException();
     }
 }

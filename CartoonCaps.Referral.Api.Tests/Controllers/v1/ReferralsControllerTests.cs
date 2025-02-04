@@ -6,6 +6,8 @@ using AutoFixture.Xunit2;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using CartoonCaps.Referral.Api.Models;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 
 namespace CartoonCaps.Referral.Api.Tests.Controllers.v1
@@ -14,56 +16,16 @@ namespace CartoonCaps.Referral.Api.Tests.Controllers.v1
     {
         [Theory]
         [AutoControllerDomainData]
-        public void GivenUserDoesNotExist_WhenCreateCode_ThenReturnBadRequest(
-            [Frozen] Mock<IUserService> userServiceMock,
-            string userId,
-            ReferralsController controller
-        )
-        {
-            userServiceMock.Setup(x => x.Exists(userId)).Returns(false);
-
-            var result = controller.CreateCode(userId);
-
-            Assert.IsType<BadRequestObjectResult>(result);
-            var badRequestResult = result as BadRequestObjectResult;
-            Assert.Equal("User does not exist.", badRequestResult?.Value);
-        }
-
-        [Theory]
-        [AutoControllerDomainData]
-        public void GivenUserExistsAndCodeExists_WhenCreateCode_ThenReturnConflict(
-            [Frozen] Mock<IUserService> userServiceMock,
+        public async Task GivenAUserId_WhenCreateCode_ThenReturnCreated(
             [Frozen] Mock<IReferralService> referralServiceMock,
             string userId,
             ReferralsController controller,
             string code
         )
         {
-            userServiceMock.Setup(x => x.Exists(userId)).Returns(true);
-            referralServiceMock.Setup(x => x.GetCode(userId)).Returns(code);
+            referralServiceMock.Setup(x => x.CreateCodeAsync(userId)).ReturnsAsync(code);
 
-            var result = controller.CreateCode(userId);
-
-            Assert.IsType<ConflictObjectResult>(result);
-            var conflictResult = result as ConflictObjectResult;
-            Assert.Equal("Referral code already exists.", conflictResult?.Value);
-        }
-
-        [Theory]
-        [AutoControllerDomainData]
-        public void GivenUserExistsAndCodeDoesNotExist_WhenCreateCode_ThenReturnCreated(
-            [Frozen] Mock<IUserService> userServiceMock,
-            [Frozen] Mock<IReferralService> referralServiceMock,
-            string userId,
-            ReferralsController controller,
-            string code
-        )
-        {
-            userServiceMock.Setup(x => x.Exists(userId)).Returns(true);
-            referralServiceMock.Setup(x => x.GetCode(userId)).Returns(null as string);
-            referralServiceMock.Setup(x => x.CreateCode(userId)).Returns(code);
-
-            var result = controller.CreateCode(userId);
+            var result = await controller.CreateCode(userId);
 
             Assert.IsType<CreatedAtActionResult>(result);
             var createdResult = result as CreatedAtActionResult;
@@ -75,15 +37,72 @@ namespace CartoonCaps.Referral.Api.Tests.Controllers.v1
 
         [Theory]
         [AutoControllerDomainData]
-        public void GivenCodeDoesNotExist_WhenGetCode_ThenReturnNotFound(
+        public async Task GivenArgumentException_WhenCreateCode_ThenReturnBadRequest(
+            [Frozen] Mock<IReferralService> referralServiceMock,
+            string userId,
+            ReferralsController controller,
+            string exceptionMessage
+        )
+        {
+            referralServiceMock.Setup(x => x.CreateCodeAsync(userId)).Throws(new ArgumentException(exceptionMessage));
+
+            var result = await controller.CreateCode(userId);
+
+            Assert.IsType<BadRequestObjectResult>(result);
+            var badRequestResult = result as BadRequestObjectResult;
+            Assert.NotNull(badRequestResult);
+            Assert.Equal(exceptionMessage, badRequestResult.Value);
+        }
+
+        [Theory]
+        [AutoControllerDomainData]
+        public async Task GivenInvalidOperationException_WhenCreateCode_ThenReturnConflict(
+            [Frozen] Mock<IReferralService> referralServiceMock,
+            string userId,
+            ReferralsController controller,
+            string exceptionMessage
+        )
+        {
+            referralServiceMock.Setup(x => x.CreateCodeAsync(userId)).Throws(new InvalidOperationException(exceptionMessage));
+
+            var result = await controller.CreateCode(userId);
+
+            Assert.IsType<ConflictObjectResult>(result);
+            var conflictResult = result as ConflictObjectResult;
+            Assert.NotNull(conflictResult);
+            Assert.Equal(exceptionMessage, conflictResult.Value);
+        }
+
+        [Theory]
+        [AutoControllerDomainData]
+        public async Task GivenException_WhenCreateCode_ThenReturnInternalServerError(
             [Frozen] Mock<IReferralService> referralServiceMock,
             string userId,
             ReferralsController controller
         )
         {
-            referralServiceMock.Setup(x => x.GetCode(userId)).Returns(null as string);
+            referralServiceMock.Setup(x => x.CreateCodeAsync(userId)).Throws<Exception>();
 
-            var result = controller.GetCode(userId);
+            var result = await controller.CreateCode(userId);
+
+            Assert.IsType<ObjectResult>(result);
+            var objectResult = result as ObjectResult;
+            Assert.NotNull(objectResult);
+            Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
+            Assert.Equal("An error occured while creating the referral code.", objectResult.Value);
+        }
+
+        [Theory]
+        [AutoControllerDomainData]
+        public async Task GivenNullCode_WhenGetCode_ThenReturnNotFound(
+            [Frozen] Mock<IReferralService> referralServiceMock,
+            string userId,
+            ReferralsController controller
+        )
+        {
+            referralServiceMock.Setup(x => x.GetCodeAsync(userId)).ReturnsAsync(null as string);
+
+            var result = await controller.GetCode(userId);
 
             Assert.IsType<NotFoundObjectResult>(result);
             var notFoundResult = result as NotFoundObjectResult;
@@ -92,16 +111,16 @@ namespace CartoonCaps.Referral.Api.Tests.Controllers.v1
 
         [Theory]
         [AutoControllerDomainData]
-        public void GivenCodeExists_WhenGetCode_ThenReturnOk(
+        public async Task GivenCodeExists_WhenGetCode_ThenReturnOk(
             [Frozen] Mock<IReferralService> referralServiceMock,
             string userId,
             ReferralsController controller,
             string code
         )
         {
-            referralServiceMock.Setup(x => x.GetCode(userId)).Returns(code);
+            referralServiceMock.Setup(x => x.GetCodeAsync(userId)).ReturnsAsync(code);
 
-            var result = controller.GetCode(userId);
+            var result = await controller.GetCode(userId);
 
             Assert.IsType<OkObjectResult>(result);
             var okResult = result as OkObjectResult;
@@ -111,15 +130,15 @@ namespace CartoonCaps.Referral.Api.Tests.Controllers.v1
 
         [Theory]
         [AutoControllerDomainData]
-        public void GivenExceptionThrown_WhenGetCode_ThenReturnInternalServerError(
+        public async Task GivenExceptionThrown_WhenGetCode_ThenReturnInternalServerError(
             [Frozen] Mock<IReferralService> referralServiceMock,
             string userId,
             ReferralsController controller
         )
         {
-            referralServiceMock.Setup(x => x.GetCode(userId)).Throws<Exception>();
+            referralServiceMock.Setup(x => x.GetCodeAsync(userId)).Throws<Exception>();
 
-            var result = controller.GetCode(userId);
+            var result = await controller.GetCode(userId);
 
             Assert.IsType<ObjectResult>(result);
             var objectResult = result as ObjectResult;
@@ -131,15 +150,15 @@ namespace CartoonCaps.Referral.Api.Tests.Controllers.v1
 
         [Theory]
         [AutoControllerDomainData]
-        public void GivenNullDetails_WhenGetDetails_ThenReturnNotFound(
+        public async Task GivenNullRecords_WhenGetReferralRecords_ThenReturnNotFound(
             [Frozen] Mock<IReferralService> referralServiceMock,
             string userId,
             ReferralsController controller
         )
         {
-            referralServiceMock.Setup(x => x.GetDetails(userId)).Returns(null as IEnumerable<ReferralDetails>);
+            referralServiceMock.Setup(x => x.GetReferralRecordsAsync(userId)).ReturnsAsync(null as IEnumerable<ReferralRecord>);
 
-            var result = controller.GetReferralDetails(userId);
+            var result = await controller.GetReferralRecords(userId);
 
             Assert.IsType<NotFoundObjectResult>(result);
             var notFoundResult = result as NotFoundObjectResult;
@@ -148,34 +167,34 @@ namespace CartoonCaps.Referral.Api.Tests.Controllers.v1
 
         [Theory]
         [AutoControllerDomainData]
-        public void GivenDetails_WhenGetStatus_ThenReturnOk(
+        public async Task GivenRecords_WhenGetReferralRecords_ThenReturnOk(
             [Frozen] Mock<IReferralService> referralServiceMock,
             string userId,
             ReferralsController controller,
-            IEnumerable<ReferralDetails> referralDetails
+            IEnumerable<ReferralRecord> referralRecords
         )
         {
-            referralServiceMock.Setup(x => x.GetDetails(userId)).Returns(referralDetails);
+            referralServiceMock.Setup(x => x.GetReferralRecordsAsync(userId)).ReturnsAsync(referralRecords);
 
-            var result = controller.GetReferralDetails(userId);
+            var result = await controller.GetReferralRecords(userId);
 
             Assert.IsType<OkObjectResult>(result);
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
-            Assert.Equal(referralDetails, okResult.Value);
+            Assert.Equivalent(referralRecords, okResult.Value);
         }
 
         [Theory]
         [AutoControllerDomainData]
-        public void GivenExceptionThrown_WhenGetDetails_ThenReturnInternalServerError(
+        public async Task GivenExceptionThrown_WhenGetReferralRecords_ThenReturnInternalServerError(
             [Frozen] Mock<IReferralService> referralServiceMock,
             string userId,
             ReferralsController controller
         )
         {
-            referralServiceMock.Setup(x => x.GetDetails(userId)).Throws<Exception>();
+            referralServiceMock.Setup(x => x.GetReferralRecordsAsync(userId)).Throws<Exception>();
 
-            var result = controller.GetReferralDetails(userId);
+            var result = await controller.GetReferralRecords(userId);
 
             Assert.IsType<ObjectResult>(result);
             var objectResult = result as ObjectResult;
@@ -186,32 +205,37 @@ namespace CartoonCaps.Referral.Api.Tests.Controllers.v1
 
         [Theory]
         [AutoControllerDomainData]
-        public void GivenInvalidCode_WhenCreateReferralRecord_ThenReturnNotFound(
-            [Frozen] Mock<IReferralService> referralServiceMock,
+        public async Task GivenModelStateInvalid_WhenCreateReferralRecord_ThenReturnBadRequest(
             CreateReferralRecordRequest createReferralRecordRequest,
-            ReferralsController controller
+            ReferralsController controller,
+            string modelErrorKey,
+            string modelErrorMessage
         )
         {
-            referralServiceMock.Setup(x => x.ValidateCode(createReferralRecordRequest.ReferralCode)).Returns(false);
+            controller.ModelState.AddModelError(modelErrorKey, modelErrorMessage);
 
-            var result = controller.CreateReferralRecord(createReferralRecordRequest);
+            var result = await controller.CreateReferralRecord(createReferralRecordRequest);
 
             Assert.IsType<BadRequestObjectResult>(result);
-            var notFoundResult = result as BadRequestObjectResult;
-            Assert.Equal("Invalid referral code.", notFoundResult?.Value);
+            var badRequestResult = result as BadRequestObjectResult;
+            Assert.NotNull(badRequestResult);
+            Assert.IsType<SerializableError>(badRequestResult.Value);
+            var errors = badRequestResult.Value as SerializableError;
+            Assert.NotNull(errors);
+            Assert.Equal(new[] { modelErrorMessage }, errors[modelErrorKey]);
         }
 
         [Theory]
         [AutoControllerDomainData]
-        public void GivenValidCode_WhenCreateReferralRecord_ThenReturnCreated(
+        public async Task GivenValidModelState_WhenCreateReferralRecord_ThenReturnCreated(
             [Frozen] Mock<IReferralService> referralServiceMock,
             CreateReferralRecordRequest createReferralRecordRequest,
             ReferralsController controller
         )
         {
-            referralServiceMock.Setup(x => x.ValidateCode(createReferralRecordRequest.ReferralCode)).Returns(true);
+            referralServiceMock.Setup(x => x.CreateReferralRecordAsync(createReferralRecordRequest)).Returns(Task.CompletedTask);
 
-            var result = controller.CreateReferralRecord(createReferralRecordRequest);
+            var result = await controller.CreateReferralRecord(createReferralRecordRequest);
 
             Assert.IsType<CreatedResult>(result);
             var createdResult = result as CreatedResult;
@@ -220,15 +244,15 @@ namespace CartoonCaps.Referral.Api.Tests.Controllers.v1
 
         [Theory]
         [AutoControllerDomainData]
-        public void GivenExceptionThrown_WhenCreateReferralRecord_ThenReturnInternalServerError(
+        public async Task GivenExceptionThrown_WhenCreateReferralRecord_ThenReturnInternalServerError(
             [Frozen] Mock<IReferralService> referralServiceMock,
             CreateReferralRecordRequest createReferralRecordRequest,
             ReferralsController controller
         )
         {
-            referralServiceMock.Setup(x => x.ValidateCode(createReferralRecordRequest.ReferralCode)).Throws<Exception>();
+            referralServiceMock.Setup(x => x.CreateReferralRecordAsync(createReferralRecordRequest)).Throws<Exception>();
 
-            var result = controller.CreateReferralRecord(createReferralRecordRequest);
+            var result = await controller.CreateReferralRecord(createReferralRecordRequest);
 
             Assert.IsType<ObjectResult>(result);
             var objectResult = result as ObjectResult;
@@ -236,5 +260,6 @@ namespace CartoonCaps.Referral.Api.Tests.Controllers.v1
             Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
             Assert.Equal("An error occured while creating the referral record.", objectResult.Value);
         }
+
     }
 }

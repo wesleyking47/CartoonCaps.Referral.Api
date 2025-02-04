@@ -2,5 +2,6 @@
 
 public interface IUserService
 {
-    bool Exists(string userId);
+    Task<bool> ValidateUserIdAsync(string userId);
+    Task<string?> GetUserIdByReferralCodeAsync(string code);
 }

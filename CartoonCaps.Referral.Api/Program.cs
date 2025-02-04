@@ -18,7 +18,7 @@ builder.Services.AddApiVersioning(options =>
         options.SubstituteApiVersionInUrl = true;
     });
 
-builder.Services.AddTransient<IReferralsService, ReferralsService>();
+builder.Services.AddTransient<IReferralService, ReferralService>();
 builder.Services.AddTransient<IUserService, UserService>();
 
 var app = builder.Build();

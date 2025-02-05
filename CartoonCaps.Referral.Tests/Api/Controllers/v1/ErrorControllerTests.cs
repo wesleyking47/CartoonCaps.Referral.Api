@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Moq;
 
-namespace CartoonCaps.Referral.Api.Tests.Controllers.v1;
+namespace CartoonCaps.Referral.Tests.Api.Controllers.v1;
 
 public class ErrorControllerTests
 {
@@ -33,6 +33,17 @@ public class ErrorControllerTests
         hostEnvironmentMock.Setup(x => x.EnvironmentName).Returns("Development");
 
         var result = controller.HandleErrorDevelopment(hostEnvironmentMock.Object);
+
+        Assert.IsType<ObjectResult>(result);
+    }
+
+    [Theory]
+    [AutoControllerDomainData]
+    public void GivenActionCalled_WhenHandleError_ThenReturnProblem(
+        ErrorController controller
+    )
+    {
+        var result = controller.HandleError();
 
         Assert.IsType<ObjectResult>(result);
     }

@@ -1,6 +1,7 @@
-using CartoonCaps.Referral.Api.Repositories;
-using CartoonCaps.Referral.Api.Services;
-using CartoonCaps.Referral.Api.Utilities;
+using CartoonCaps.Referral.Application.Services;
+using CartoonCaps.Referral.Application.Utilities;
+using CartoonCaps.Referral.Domain.Infra.Interfaces;
+using CartoonCaps.Referral.Infrastructure.Repositories;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);

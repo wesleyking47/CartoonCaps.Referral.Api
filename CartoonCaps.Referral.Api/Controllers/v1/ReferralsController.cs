@@ -1,6 +1,6 @@
 using Asp.Versioning;
-using CartoonCaps.Referral.Api.Models;
-using CartoonCaps.Referral.Api.Services;
+using CartoonCaps.Referral.Application.Dtos;
+using CartoonCaps.Referral.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CartoonCaps.Referral.Api.Controllers.v1;
@@ -14,21 +14,21 @@ public class ReferralsController(IReferralService referralsService) : Controller
     private readonly IReferralService _referralsService = referralsService;
 
     [HttpPost]
-    public async Task<ActionResult> PostAsync([FromBody] CreateReferralRecordRequest createReferralRecordRequest)
+    public async Task<ActionResult> PostAsync([FromBody] ReferralRecordDto referralRecord)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        await _referralsService.CreateReferralRecordAsync(createReferralRecordRequest);
+        await _referralsService.CreateReferralRecordAsync(referralRecord);
 
         return Created();
     }
 
     [HttpGet]
     [Route("{userId}")]
-    public async Task<ActionResult<IEnumerable<ReferralRecord>>> GetAsync([FromRoute] string userId)
+    public async Task<ActionResult<IEnumerable<ReferralRecordDto>>> GetAsync([FromRoute] string userId)
     {
         var details = await _referralsService.GetReferralRecordsAsync(userId);
         if (details == null)

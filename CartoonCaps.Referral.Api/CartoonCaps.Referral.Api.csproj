@@ -13,4 +13,8 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.0.*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CartoonCaps.Referral.Application\CartoonCaps.Referral.Application.csproj" />
+  </ItemGroup>
+
 </Project>

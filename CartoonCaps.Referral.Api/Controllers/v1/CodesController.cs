@@ -1,5 +1,5 @@
 using Asp.Versioning;
-using CartoonCaps.Referral.Api.Services;
+using CartoonCaps.Referral.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CartoonCaps.Referral.Api.Controllers.v1;

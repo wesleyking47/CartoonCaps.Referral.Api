@@ -5,7 +5,13 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartoonCaps.Referral.Api", "CartoonCaps.Referral.Api\CartoonCaps.Referral.Api.csproj", "{0716783B-9F1E-4483-B717-4DBD05CDD202}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartoonCaps.Referral.Api.Tests", "CartoonCaps.Referral.Api.Tests\CartoonCaps.Referral.Api.Tests.csproj", "{C7199A23-BD3E-44BB-9716-79991F1DC184}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartoonCaps.Referral.Domain", "CartoonCaps.Referral.Domain\CartoonCaps.Referral.Domain.csproj", "{2BEC873D-EDD8-4CDB-9104-8AD8072FABB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartoonCaps.Referral.Infrastructure", "CartoonCaps.Referral.Infrastructure\CartoonCaps.Referral.Infrastructure.csproj", "{A7BFC2F8-5117-46E6-B24A-2C03BAC3906B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartoonCaps.Referral.Application", "CartoonCaps.Referral.Application\CartoonCaps.Referral.Application.csproj", "{C288910E-FF02-42C6-9333-AF2F3B6E076D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartoonCaps.Referral.Tests", "CartoonCaps.Referral.Tests\CartoonCaps.Referral.Tests.csproj", "{EA468833-BF4F-401A-98C0-DE2E0B1C950D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,9 +26,21 @@ Global
 		{0716783B-9F1E-4483-B717-4DBD05CDD202}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0716783B-9F1E-4483-B717-4DBD05CDD202}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0716783B-9F1E-4483-B717-4DBD05CDD202}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C7199A23-BD3E-44BB-9716-79991F1DC184}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C7199A23-BD3E-44BB-9716-79991F1DC184}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C7199A23-BD3E-44BB-9716-79991F1DC184}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C7199A23-BD3E-44BB-9716-79991F1DC184}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BEC873D-EDD8-4CDB-9104-8AD8072FABB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BEC873D-EDD8-4CDB-9104-8AD8072FABB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BEC873D-EDD8-4CDB-9104-8AD8072FABB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BEC873D-EDD8-4CDB-9104-8AD8072FABB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7BFC2F8-5117-46E6-B24A-2C03BAC3906B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7BFC2F8-5117-46E6-B24A-2C03BAC3906B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7BFC2F8-5117-46E6-B24A-2C03BAC3906B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7BFC2F8-5117-46E6-B24A-2C03BAC3906B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C288910E-FF02-42C6-9333-AF2F3B6E076D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C288910E-FF02-42C6-9333-AF2F3B6E076D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C288910E-FF02-42C6-9333-AF2F3B6E076D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C288910E-FF02-42C6-9333-AF2F3B6E076D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA468833-BF4F-401A-98C0-DE2E0B1C950D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA468833-BF4F-401A-98C0-DE2E0B1C950D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA468833-BF4F-401A-98C0-DE2E0B1C950D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA468833-BF4F-401A-98C0-DE2E0B1C950D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

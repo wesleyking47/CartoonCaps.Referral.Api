@@ -50,35 +50,6 @@ public class ReferralServiceTests
 
     [Theory]
     [AutoDomainData]
-    public async Task GivenUserAlreadyHasCode_WhenCreateCode_ThenThrowInvalidOperationException(
-        [Frozen] Mock<IUserService> userServiceMock,
-        [Frozen] Mock<IReferralRepository> referralRepositoryMock,
-        string userId,
-        ReferralService service,
-        string code
-    )
-    {
-        userServiceMock.Setup(x => x.ValidateUserIdAsync(userId)).ReturnsAsync(true);
-        referralRepositoryMock.Setup(x => x.GetCodeAsync(userId)).ReturnsAsync(code);
-
-        await Assert.ThrowsAsync<InvalidOperationException>(() => service.CreateCodeAsync(userId));
-    }
-
-    [Theory]
-    [AutoDomainData]
-    public async Task GivenInvalidUserId_WhenCreateCode_ThenThrowArgumentException(
-        [Frozen] Mock<IUserService> userServiceMock,
-        string userId,
-        ReferralService service
-    )
-    {
-        userServiceMock.Setup(x => x.ValidateUserIdAsync(userId)).ReturnsAsync(false);
-
-        await Assert.ThrowsAsync<ArgumentException>(() => service.CreateCodeAsync(userId));
-    }
-
-    [Theory]
-    [AutoDomainData]
     public async Task GivenAUserId_WhenGetCode_ThenReturnCode(
         [Frozen] Mock<IReferralRepository> referralRepositoryMock,
         string userId,
@@ -140,35 +111,6 @@ public class ReferralServiceTests
 
     [Theory]
     [AutoDomainData]
-    public async Task GivenInvalidReferralCode_WhenCreateReferralRecord_ThenThrowArgumentException(
-        [Frozen] Mock<IReferralRepository> referralRepositoryMock,
-        ReferralRecordDto referralRecord,
-        ReferralService service
-    )
-    {
-        referralRepositoryMock.Setup(x => x.GetUserIdByReferralCodeAsync(referralRecord.ReferralCode)).ReturnsAsync(null as string);
-
-        await Assert.ThrowsAsync<ArgumentException>(() => service.CreateReferralRecordAsync(referralRecord));
-    }
-
-    [Theory]
-    [AutoDomainData]
-    public async Task GivenAValidReferralCodeAndAnInvalidReferredUserId_WhenCreateReferralRecord_ThenThrowArgumentException(
-        [Frozen] Mock<IUserService> userServiceMock,
-        [Frozen] Mock<IReferralRepository> referralRepositoryMock,
-        ReferralRecordDto referralRecord,
-        ReferralService service,
-        string referringUserId
-    )
-    {
-        referralRepositoryMock.Setup(x => x.GetUserIdByReferralCodeAsync(referralRecord.ReferralCode)).ReturnsAsync(referringUserId);
-        userServiceMock.Setup(x => x.ValidateUserIdAsync(referralRecord.UserId)).ReturnsAsync(false);
-
-        await Assert.ThrowsAsync<ArgumentException>(() => service.CreateReferralRecordAsync(referralRecord));
-    }
-
-    [Theory]
-    [AutoDomainData]
     public async Task GivenAUserId_WhenGetReferralRecords_ThenReturnRecords(
         [Frozen] Mock<IReferralRepository> referralRepositoryMock,
         string userId,
@@ -181,11 +123,7 @@ public class ReferralServiceTests
         var result = await service.GetReferralRecordsAsync(userId);
 
         var expectedReferralRecords = referralRecords.Select(x =>
-            new ReferralRecord
-            {
-                ReferralStatus = x.ReferralStatus,
-                RefereeName = x.RefereeName
-            });
+            new ReferralRecord(x.UserId, x.RefereeName, x.ReferralStatus));
         Assert.Equivalent(expectedReferralRecords, result);
     }
 

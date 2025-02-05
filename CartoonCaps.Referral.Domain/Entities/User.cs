@@ -1,7 +1,7 @@
 namespace CartoonCaps.Referral.Domain.Entities;
 
-public class User
+public class User(string id, string name)
 {
-    public string Id { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
+    public string Id { get; set; } = id;
+    public string Name { get; set; } = name;
 }

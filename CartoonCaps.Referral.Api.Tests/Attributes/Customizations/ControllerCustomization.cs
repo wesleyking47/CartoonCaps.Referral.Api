@@ -9,8 +9,6 @@ public class ControllerCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<ControllerContext>(c => c.OmitAutoProperties());
-        fixture.Customize<ControllerActionDescriptor>(c => c.OmitAutoProperties());
         fixture.Customize<BindingInfo>(c => c.OmitAutoProperties());
     }
 }

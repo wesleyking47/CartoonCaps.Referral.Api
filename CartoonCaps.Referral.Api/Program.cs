@@ -21,10 +21,8 @@ builder.Services.AddApiVersioning(options =>
     });
 
 builder.Services.AddTransient<IReferralService, ReferralService>();
-builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IReferralCodeGenerator, ReferralCodeGenerator>();
 builder.Services.AddTransient<IReferralRepository, ReferralRepository>();
-builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 

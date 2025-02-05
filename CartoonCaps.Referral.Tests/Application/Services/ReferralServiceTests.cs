@@ -14,14 +14,12 @@ public class ReferralServiceTests
     [Theory]
     [AutoDomainData]
     public async Task GivenAUserId_WhenCreateCode_ThenReturnCode(
-        [Frozen] Mock<IUserService> userServiceMock,
         [Frozen] Mock<IReferralCodeGenerator> referralCodeGeneratorMock,
         string userId,
         ReferralService service,
         string code
     )
     {
-        userServiceMock.Setup(x => x.ValidateUserIdAsync(userId)).ReturnsAsync(true);
         referralCodeGeneratorMock.Setup(x => x.GenerateCode()).Returns(code);
 
         var result = await service.CreateCodeAsync(userId);
@@ -32,7 +30,6 @@ public class ReferralServiceTests
     [Theory]
     [AutoDomainData]
     public async Task GivenAUserIdAndCode_WhenCreateCode_ThenSaveCode(
-        [Frozen] Mock<IUserService> userServiceMock,
         [Frozen] Mock<IReferralCodeGenerator> referralCodeGeneratorMock,
         [Frozen] Mock<IReferralRepository> referralRepositoryMock,
         string userId,
@@ -40,7 +37,6 @@ public class ReferralServiceTests
         ReferralService service
     )
     {
-        userServiceMock.Setup(x => x.ValidateUserIdAsync(userId)).ReturnsAsync(true);
         referralCodeGeneratorMock.Setup(x => x.GenerateCode()).Returns(code);
 
         await service.CreateCodeAsync(userId);
@@ -82,14 +78,12 @@ public class ReferralServiceTests
     [Theory]
     [AutoDomainData]
     public async Task GivenValidReferralCodeAndValidReferredUserId_WhenCreateReferralRecord_ThenSaveRecord(
-        [Frozen] Mock<IUserService> userServiceMock,
         [Frozen] Mock<IReferralRepository> referralRepositoryMock,
         ReferralRecordDto referralRecord,
         ReferralService service,
         string referringUserId
     )
     {
-        userServiceMock.Setup(x => x.ValidateUserIdAsync(referralRecord.UserId)).ReturnsAsync(true);
         referralRepositoryMock.Setup(x => x.GetUserIdByReferralCodeAsync(referralRecord.ReferralCode)).ReturnsAsync(referringUserId);
 
         await service.CreateReferralRecordAsync(referralRecord);

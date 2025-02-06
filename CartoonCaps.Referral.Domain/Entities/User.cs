@@ -6,5 +6,6 @@ public class User
     public string Name { get; set; } = null!;
     public string ReferralCode { get; set; } = null!;
 
-    public ICollection<ReferralRecord> ReferralRecords { get; set; } = null!;
+    public ICollection<ReferralRecord>? ReferrerRecords { get; set; }
+    public ReferralRecord? RefereeRecord { get; set; }
 }

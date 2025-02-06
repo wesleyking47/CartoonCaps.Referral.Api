@@ -19,6 +19,8 @@ public class ReferralContext : DbContext
                 .IsUnique();
             entity.HasMany<ReferralRecord>()
                 .WithOne(x => x.Referrer);
+            entity.HasMany<ReferralRecord>()
+                .WithOne(x => x.Referee);
         });
 
         modelBuilder.Entity<ReferralRecord>(entity =>
@@ -26,10 +28,10 @@ public class ReferralContext : DbContext
             entity.HasIndex(x => new { x.RefereeId, x.ReferrerId })
                 .IsUnique();
             entity.HasOne(x => x.Referee)
-                .WithMany(x => x.ReferralRecords)
-                .HasForeignKey(x => x.RefereeId);
+                .WithOne(x => x.RefereeRecord)
+                .HasForeignKey<ReferralRecord>(x => x.RefereeId);
             entity.HasOne(x => x.Referrer)
-                .WithMany(x => x.ReferralRecords)
+                .WithMany(x => x.ReferrerRecords)
                 .HasForeignKey(x => x.ReferrerId);
         });
     }

@@ -10,7 +10,7 @@ public class ReferralRepository(ReferralContext context) : IReferralRepository
 
     public Task<string?> GetCodeAsync(int userId)
     {
-        throw new NotImplementedException();
+        return Task.FromResult<string?>(userId.ToString());
     }
 
     public async Task<IEnumerable<ReferralRecord>?> GetReferralRecordsAsync(int userId)

@@ -17,10 +17,6 @@ public class ReferralContext : DbContext
         {
             entity.HasIndex(x => x.ReferralCode)
                 .IsUnique();
-            entity.HasMany<ReferralRecord>()
-                .WithOne(x => x.Referrer);
-            entity.HasMany<ReferralRecord>()
-                .WithOne(x => x.Referee);
         });
 
         modelBuilder.Entity<ReferralRecord>(entity =>

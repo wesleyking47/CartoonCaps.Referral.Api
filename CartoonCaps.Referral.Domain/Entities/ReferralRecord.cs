@@ -1,8 +1,12 @@
 namespace CartoonCaps.Referral.Domain.Entities;
 
-public class ReferralRecord(string userId, string refereeName, string referralStatus)
+public class ReferralRecord
 {
-    public string UserId { get; set; } = userId;
-    public string RefereeName { get; set; } = refereeName;
-    public string ReferralStatus { get; set; } = referralStatus;
+    public int Id { get; set; }
+    public int RefereeId { get; set; }
+    public int ReferrerId { get; set; }
+    public string ReferralStatus { get; set; } = null!;
+
+    public User Referee { get; set; } = null!;
+    public User Referrer { get; set; } = null!;
 }

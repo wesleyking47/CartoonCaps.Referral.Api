@@ -13,7 +13,7 @@ public class CodesControllerTests
     [AutoControllerDomainData]
     public async Task GivenAUserId_WhenPostAsync_ThenReturnCreated(
                 [Frozen] Mock<IReferralService> referralServiceMock,
-                string userId,
+                int userId,
                 CodesController controller,
                 string code
             )
@@ -32,7 +32,7 @@ public class CodesControllerTests
     [AutoControllerDomainData]
     public async Task GivenNullCode_WhenPostAsync_ThenReturnBadRequest(
         [Frozen] Mock<IReferralService> referralServiceMock,
-        string userId,
+        int userId,
         CodesController controller
     )
     {
@@ -48,7 +48,7 @@ public class CodesControllerTests
     [AutoControllerDomainData]
     public async Task GivenNullCode_WhenGetAsync_ThenReturnNotFound(
         [Frozen] Mock<IReferralService> referralServiceMock,
-        string userId,
+        int userId,
         CodesController controller
     )
     {
@@ -64,7 +64,7 @@ public class CodesControllerTests
     [AutoControllerDomainData]
     public async Task GivenCodeExists_WhenGetAsync_ThenReturnOk(
         [Frozen] Mock<IReferralService> referralServiceMock,
-        string userId,
+        int userId,
         CodesController controller,
         string code
     )

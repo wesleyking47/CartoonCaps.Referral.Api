@@ -14,7 +14,7 @@ public class CodesController(IReferralService referralsService) : ControllerBase
 
     [HttpPost]
     [Route("{userId}")]
-    public async Task<ActionResult<string>> PostAsync([FromRoute] string userId)
+    public async Task<ActionResult<string>> PostAsync([FromRoute] int userId)
     {
         var code = await _referralsService.CreateCodeAsync(userId);
         if (code == null)
@@ -27,7 +27,7 @@ public class CodesController(IReferralService referralsService) : ControllerBase
 
     [HttpGet]
     [Route("{userId}")]
-    public async Task<ActionResult<string>> GetAsync([FromRoute] string userId)
+    public async Task<ActionResult<string>> GetAsync([FromRoute] int userId)
     {
         var code = await _referralsService.GetCodeAsync(userId);
         if (code == null)

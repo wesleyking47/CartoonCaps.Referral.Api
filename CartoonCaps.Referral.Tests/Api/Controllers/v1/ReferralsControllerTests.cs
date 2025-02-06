@@ -5,16 +5,16 @@ using AutoFixture.Xunit2;
 using Microsoft.AspNetCore.Mvc;
 using CartoonCaps.Referral.Application.Dtos;
 using CartoonCaps.Referral.Application.Services;
+using Shouldly;
 
-
-namespace CartoonCaps.Referral.Api.Tests.Controllers.v1;
+namespace CartoonCaps.Referral.Tests.Api.Controllers.v1;
 
 public class ReferralsControllerTests
 {
     [Theory]
     [AutoControllerDomainData]
     public async Task GivenModelStateInvalid_WhenPost_ThenReturnBadRequest(
-        ReferralRecordDto referralRecord,
+        ReferralRecordRequest referralRecordRequest,
         ReferralsController controller,
         string modelErrorKey,
         string modelErrorMessage
@@ -22,61 +22,63 @@ public class ReferralsControllerTests
     {
         controller.ModelState.AddModelError(modelErrorKey, modelErrorMessage);
 
-        var result = await controller.PostAsync(referralRecord);
+        var result = await controller.PostAsync(referralRecordRequest);
 
-        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.NotNull(badRequestResult);
-        var errors = Assert.IsType<SerializableError>(badRequestResult.Value);
-        Assert.NotNull(errors);
-        Assert.Equal(new[] { modelErrorMessage }, errors[modelErrorKey]);
+        var badRequestResult = result.ShouldBeOfType<BadRequestObjectResult>();
+        badRequestResult.ShouldNotBeNull();
+        var errors = badRequestResult.Value.ShouldBeOfType<SerializableError>();
+        errors.ShouldNotBeNull();
+        errors[modelErrorKey].ShouldBe(new[] { modelErrorMessage });
     }
 
     [Theory]
     [AutoControllerDomainData]
     public async Task GivenValidModelState_WhenPost_ThenReturnCreated(
         [Frozen] Mock<IReferralService> referralServiceMock,
-        ReferralRecordDto referralRecord,
+        ReferralRecordRequest referralRecordRequest,
         ReferralsController controller
     )
     {
-        referralServiceMock.Setup(x => x.CreateReferralRecordAsync(referralRecord)).Returns(Task.CompletedTask);
+        referralServiceMock.Setup(x => x.CreateReferralRecordAsync(referralRecordRequest)).Returns(Task.CompletedTask);
 
-        var result = await controller.PostAsync(referralRecord);
+        var result = await controller.PostAsync(referralRecordRequest);
 
-        var createdResult = Assert.IsType<CreatedResult>(result);
-        Assert.NotNull(createdResult);
+        var createdResult = result.ShouldBeOfType<CreatedResult>();
+        createdResult.ShouldNotBeNull();
     }
 
     [Theory]
     [AutoControllerDomainData]
     public async Task GivenNullRecords_WhenGet_ThenReturnNotFound(
         [Frozen] Mock<IReferralService> referralServiceMock,
-        string userId,
-        ReferralsController controller
+        int userId,
+        ReferralsController controller,
+        ReferralRecordResponse referralRecordResponse
     )
     {
-        referralServiceMock.Setup(x => x.GetReferralRecordsAsync(userId)).ReturnsAsync(null as IEnumerable<ReferralRecordDto>);
+        referralRecordResponse.ReferralRecords = null;
+        referralServiceMock.Setup(x => x.GetReferralRecordsAsync(userId)).ReturnsAsync(referralRecordResponse);
 
         var result = await controller.GetAsync(userId);
 
-        var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
-        Assert.Equal("Referral details not found.", notFoundResult.Value);
+        var notFoundResult = result.Result.ShouldBeOfType<NotFoundObjectResult>();
+        notFoundResult.Value.ShouldBe("Referral details not found.");
     }
 
     [Theory]
     [AutoControllerDomainData]
     public async Task GivenRecords_WhenGet_ThenReturnOk(
         [Frozen] Mock<IReferralService> referralServiceMock,
-        string userId,
+        int userId,
         ReferralsController controller,
-        IEnumerable<ReferralRecordDto> referralRecords
+        ReferralRecordResponse referralRecordResponse
     )
     {
-        referralServiceMock.Setup(x => x.GetReferralRecordsAsync(userId)).ReturnsAsync(referralRecords);
+        referralServiceMock.Setup(x => x.GetReferralRecordsAsync(userId)).ReturnsAsync(referralRecordResponse);
 
         var result = await controller.GetAsync(userId);
 
-        Assert.NotNull(result.Value);
-        Assert.Equal(referralRecords, result.Value);
+        result.Value.ShouldNotBeNull();
+        result.Value.ReferralRecords.ShouldBe(referralRecordResponse.ReferralRecords);
     }
 }

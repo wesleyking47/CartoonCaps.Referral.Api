@@ -14,28 +14,28 @@ public class ReferralsController(IReferralService referralsService) : Controller
     private readonly IReferralService _referralsService = referralsService;
 
     [HttpPost]
-    public async Task<ActionResult> PostAsync([FromBody] ReferralRecordDto referralRecord)
+    public async Task<ActionResult> PostAsync([FromBody] ReferralRecordRequest referralRecordRequest)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        await _referralsService.CreateReferralRecordAsync(referralRecord);
+        await _referralsService.CreateReferralRecordAsync(referralRecordRequest);
 
         return Created();
     }
 
     [HttpGet]
     [Route("{userId}")]
-    public async Task<ActionResult<IEnumerable<ReferralRecordDto>>> GetAsync([FromRoute] string userId)
+    public async Task<ActionResult<ReferralRecordResponse>> GetAsync([FromRoute] int userId)
     {
-        var details = await _referralsService.GetReferralRecordsAsync(userId);
-        if (details == null)
+        var response = await _referralsService.GetReferralRecordsAsync(userId);
+        if (response.ReferralRecords == null)
         {
             return NotFound("Referral details not found.");
         }
 
-        return details.ToList();
+        return response;
     }
 }

@@ -1,13 +1,14 @@
 using AutoFixture.Xunit2;
-using CartoonCaps.Referral.Api.Tests.Attributes;
 using CartoonCaps.Referral.Application.Dtos;
 using CartoonCaps.Referral.Application.Services;
 using CartoonCaps.Referral.Application.Utilities;
 using CartoonCaps.Referral.Domain.Entities;
 using CartoonCaps.Referral.Domain.Infra.Interfaces;
+using CartoonCaps.Referral.Tests.Attributes;
 using Moq;
+using Shouldly;
 
-namespace CartoonCaps.Referral.Api.Tests.Application.Services;
+namespace CartoonCaps.Referral.Tests.Application.Services;
 
 public class ReferralServiceTests
 {
@@ -15,7 +16,7 @@ public class ReferralServiceTests
     [AutoDomainData]
     public async Task GivenAUserId_WhenCreateCode_ThenReturnCode(
         [Frozen] Mock<IReferralCodeGenerator> referralCodeGeneratorMock,
-        string userId,
+        int userId,
         ReferralService service,
         string code
     )
@@ -24,7 +25,7 @@ public class ReferralServiceTests
 
         var result = await service.CreateCodeAsync(userId);
 
-        Assert.Equal(code, result);
+        result.ShouldBe(code);
     }
 
     [Theory]
@@ -32,7 +33,7 @@ public class ReferralServiceTests
     public async Task GivenAUserIdAndCode_WhenCreateCode_ThenSaveCode(
         [Frozen] Mock<IReferralCodeGenerator> referralCodeGeneratorMock,
         [Frozen] Mock<IReferralRepository> referralRepositoryMock,
-        string userId,
+        int userId,
         string code,
         ReferralService service
     )
@@ -48,7 +49,7 @@ public class ReferralServiceTests
     [AutoDomainData]
     public async Task GivenAUserId_WhenGetCode_ThenReturnCode(
         [Frozen] Mock<IReferralRepository> referralRepositoryMock,
-        string userId,
+        int userId,
         string code,
         ReferralService service
     )
@@ -57,14 +58,14 @@ public class ReferralServiceTests
 
         var result = await service.GetCodeAsync(userId);
 
-        Assert.Equal(code, result);
+        result.ShouldBe(code);
     }
 
     [Theory]
     [AutoDomainData]
     public async Task GivenNoCode_WhenGetCode_ThenReturnNull(
         [Frozen] Mock<IReferralRepository> referralRepositoryMock,
-        string userId,
+        int userId,
         ReferralService service
     )
     {
@@ -72,42 +73,42 @@ public class ReferralServiceTests
 
         var result = await service.GetCodeAsync(userId);
 
-        Assert.Null(result);
+        result.ShouldBeNull();
     }
 
     [Theory]
-    [AutoDomainData]
+    [AutoOmitRecursionDomainData]
     public async Task GivenValidReferralCodeAndValidReferredUserId_WhenCreateReferralRecord_ThenSaveRecord(
         [Frozen] Mock<IReferralRepository> referralRepositoryMock,
-        ReferralRecordDto referralRecord,
+        ReferralRecordRequest referralRecordRequest,
         ReferralService service,
-        string referringUserId
+        User user
     )
     {
-        referralRepositoryMock.Setup(x => x.GetUserIdByReferralCodeAsync(referralRecord.ReferralCode)).ReturnsAsync(referringUserId);
+        referralRepositoryMock.Setup(x => x.GetUserByReferralCodeAsync(referralRecordRequest.ReferralCode)).ReturnsAsync(user);
 
-        await service.CreateReferralRecordAsync(referralRecord);
+        await service.CreateReferralRecordAsync(referralRecordRequest);
 
-        var expectedReferralRecordDto = new ReferralRecordDto
+        var expectedReferralRecord = new ReferralRecord
         {
-            RefereeName = referralRecord.RefereeName,
-            ReferralStatus = referralRecord.ReferralStatus,
-            UserId = referralRecord.UserId
+            RefereeId = referralRecordRequest.RefereeId,
+            ReferrerId = user.Id,
+            ReferralStatus = "Pending"
         };
 
         referralRepositoryMock.Verify(x => x.SaveReferralRecordAsync(
             It.Is<ReferralRecord>(r =>
-                r.RefereeName == expectedReferralRecordDto.RefereeName
-                && r.ReferralStatus == expectedReferralRecordDto.ReferralStatus
-                && r.UserId == expectedReferralRecordDto.UserId)
+                r.RefereeId == expectedReferralRecord.RefereeId &&
+                r.ReferrerId == expectedReferralRecord.ReferrerId &&
+                r.ReferralStatus == expectedReferralRecord.ReferralStatus)
         ), Times.Once);
     }
 
     [Theory]
-    [AutoDomainData]
+    [AutoOmitRecursionDomainData]
     public async Task GivenAUserId_WhenGetReferralRecords_ThenReturnRecords(
         [Frozen] Mock<IReferralRepository> referralRepositoryMock,
-        string userId,
+        int userId,
         ReferralService service,
         IEnumerable<ReferralRecord> referralRecords
     )
@@ -116,16 +117,23 @@ public class ReferralServiceTests
 
         var result = await service.GetReferralRecordsAsync(userId);
 
-        var expectedReferralRecords = referralRecords.Select(x =>
-            new ReferralRecord(x.UserId, x.RefereeName, x.ReferralStatus));
-        Assert.Equivalent(expectedReferralRecords, result);
+        var expectedReferralRecordResponse = new ReferralRecordResponse
+        {
+            ReferralRecords = [.. referralRecords.Select(x =>
+                new ReferralRecordDto
+                {
+                    ReferralStatus = x.ReferralStatus,
+                    RefereeName = x.Referee.Name
+                }).ToList()]
+        };
+        result.ReferralRecords.ShouldBeEquivalentTo(expectedReferralRecordResponse.ReferralRecords);
     }
 
     [Theory]
     [AutoDomainData]
     public async Task GivenNoRecords_WhenGetReferralRecords_ThenAnEmptyList(
         [Frozen] Mock<IReferralRepository> referralRepositoryMock,
-        string userId,
+        int userId,
         ReferralService service
     )
     {
@@ -133,7 +141,7 @@ public class ReferralServiceTests
 
         var result = await service.GetReferralRecordsAsync(userId);
 
-        Assert.NotNull(result);
-        Assert.Empty(result);
+        result.ShouldNotBeNull();
+        result.ReferralRecords.ShouldBeEmpty();
     }
 }

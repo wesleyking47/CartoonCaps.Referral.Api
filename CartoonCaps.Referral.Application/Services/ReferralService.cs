@@ -1,4 +1,5 @@
-﻿using CartoonCaps.Referral.Application.Dtos;
+﻿using System.Collections.ObjectModel;
+using CartoonCaps.Referral.Application.Dtos;
 using CartoonCaps.Referral.Application.Utilities;
 using CartoonCaps.Referral.Domain.Entities;
 using CartoonCaps.Referral.Domain.Infra.Interfaces;
@@ -10,7 +11,7 @@ public class ReferralService(IReferralCodeGenerator referralCodeGenerator, IRefe
     private readonly IReferralCodeGenerator _referralCodeGenerator = referralCodeGenerator;
     private readonly IReferralRepository _referralRepository = referralRepository;
 
-    public async Task<string?> CreateCodeAsync(string userId)
+    public async Task<string?> CreateCodeAsync(int userId)
     {
         var code = _referralCodeGenerator.GenerateCode();
 
@@ -19,26 +20,41 @@ public class ReferralService(IReferralCodeGenerator referralCodeGenerator, IRefe
         return code;
     }
 
-    public Task<string?> GetCodeAsync(string userId)
+    public Task<string?> GetCodeAsync(int userId)
     {
         var code = _referralRepository.GetCodeAsync(userId);
         return code;
     }
 
-    public async Task CreateReferralRecordAsync(ReferralRecordDto record)
+    public async Task CreateReferralRecordAsync(ReferralRecordRequest request)
     {
-        var requestData = new ReferralRecord(record.UserId, record.RefereeName, record.ReferralStatus);
+        var referrer = await _referralRepository.GetUserByReferralCodeAsync(request.ReferralCode);
+
+        var requestData = new ReferralRecord
+        {
+            RefereeId = request.RefereeId,
+            ReferrerId = referrer.Id,
+            ReferralStatus = "Pending"
+        };
 
         await _referralRepository.SaveReferralRecordAsync(requestData);
     }
 
 
-    public async Task<IEnumerable<ReferralRecordDto>?> GetReferralRecordsAsync(string userId)
+    public async Task<ReferralRecordResponse> GetReferralRecordsAsync(int userId)
     {
         var recordsData = await _referralRepository.GetReferralRecordsAsync(userId);
 
         var records = recordsData?.Select(x =>
-            new ReferralRecordDto(x)) ?? [];
-        return records;
+            new ReferralRecordDto
+            {
+                ReferralStatus = x.ReferralStatus,
+                RefereeName = x.Referee.Name
+            }) ?? [];
+        var response = new ReferralRecordResponse
+        {
+            ReferralRecords = [.. records.ToList()]
+        };
+        return response;
     }
 }

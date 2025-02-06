@@ -4,8 +4,8 @@ namespace CartoonCaps.Referral.Application.Services;
 
 public interface IReferralService
 {
-    Task<string?> CreateCodeAsync(string userId);
-    Task<string?> GetCodeAsync(string userId);
-    Task<IEnumerable<ReferralRecordDto>?> GetReferralRecordsAsync(string userId);
-    Task CreateReferralRecordAsync(ReferralRecordDto record);
+    Task<string?> CreateCodeAsync(int userId);
+    Task<string?> GetCodeAsync(int userId);
+    Task<ReferralRecordResponse> GetReferralRecordsAsync(int userId);
+    Task CreateReferralRecordAsync(ReferralRecordRequest request);
 }

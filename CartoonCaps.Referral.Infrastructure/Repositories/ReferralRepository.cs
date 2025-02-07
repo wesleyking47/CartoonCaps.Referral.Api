@@ -28,4 +28,21 @@ public class ReferralRepository(ReferralContext context) : IReferralRepository
 
         return await _context.SaveChangesAsync() > 0;
     }
+
+    public async Task UpdateReferralRecordAsync(ReferralRecord record)
+    {
+        _context.Update(record);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteReferralRecordAsync(ReferralRecord record)
+    {
+        _context.Remove(record);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<ReferralRecord?> GetReferralRecordByRefereeIdAsync(int refereeId)
+    {
+        return await _context.ReferralRecords.SingleOrDefaultAsync(x => x.RefereeId == refereeId);
+    }
 }

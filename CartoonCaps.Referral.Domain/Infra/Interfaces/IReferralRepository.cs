@@ -6,5 +6,8 @@ public interface IReferralRepository
 {
     Task<bool> SaveReferralRecordAsync(ReferralRecord referralDataRecord);
     Task<IEnumerable<ReferralRecord>?> GetReferralRecordsAsync(int userId);
+    Task UpdateReferralRecordAsync(ReferralRecord record);
+    Task DeleteReferralRecordAsync(ReferralRecord record);
     Task<User?> GetUserByReferralCodeAsync(string code);
+    Task<ReferralRecord?> GetReferralRecordByRefereeIdAsync(int refereeId);
 }

@@ -125,4 +125,91 @@ public class ReferralRepositoryTests : IDisposable
 
         result.ShouldBeNull();
     }
+
+    [Fact]
+    public async Task GivenReferralRecord_WhenSaveReferralRecord_ThenReferralRecordSaved()
+    {
+        var newUser = new User { Id = 5, Name = "New User", ReferralCode = "E" };
+        var record = new ReferralRecord { ReferrerId = 1, RefereeId = 5, ReferralStatus = "Pending" };
+        using var context = CreateContext();
+        context.Users.Add(newUser);
+        await context.SaveChangesAsync();
+        var repository = new ReferralRepository(context);
+
+        var result = await repository.SaveReferralRecordAsync(record);
+
+        result.ShouldBeTrue();
+        var savedRecord = await context.ReferralRecords.FirstOrDefaultAsync(x => x.RefereeId == record.RefereeId);
+        savedRecord.ShouldNotBeNull();
+        savedRecord.Id.ShouldBe(4);
+        savedRecord.ReferrerId.ShouldBe(record.ReferrerId);
+        savedRecord.RefereeId.ShouldBe(record.RefereeId);
+        savedRecord.ReferralStatus.ShouldBe(record.ReferralStatus);
+    }
+
+    [Fact]
+    public async Task GivenReferralRecord_WhenUpdateReferralRecord_ThenReferralRecordUpdated()
+    {
+        var record = new ReferralRecord { Id = 1, ReferrerId = 1, RefereeId = 2, ReferralStatus = "Accepted" };
+        using var context = CreateContext();
+        var repository = new ReferralRepository(context);
+
+        await repository.UpdateReferralRecordAsync(record);
+
+        var expectedReferralRecord = new ReferralRecord { Id = 1, ReferrerId = 1, RefereeId = 2, ReferralStatus = "Accepted" };
+        var updatedRecord = await context.ReferralRecords.FirstOrDefaultAsync(x => x.Id == record.Id);
+        updatedRecord.ShouldBeEquivalentTo(expectedReferralRecord);
+    }
+
+    [Fact]
+    public async Task GivenNoChangesForReferralRecord_WhenUpdateReferralRecord_ThenReturnFalse()
+    {
+        var record = new ReferralRecord { Id = 1, ReferrerId = 1, RefereeId = 2, ReferralStatus = "Pending" };
+        using var context = CreateContext();
+        var repository = new ReferralRepository(context);
+
+        await repository.UpdateReferralRecordAsync(record);
+
+        var expectedReferralRecord = new ReferralRecord { Id = 1, ReferrerId = 1, RefereeId = 2, ReferralStatus = "Pending" };
+        var updatedRecord = await context.ReferralRecords.FirstOrDefaultAsync(x => x.Id == record.Id);
+        updatedRecord.ShouldBeEquivalentTo(expectedReferralRecord);
+    }
+
+    [Fact]
+    public async Task GivenReferralRecord_WhenDeleteReferralRecord_ThenReferralRecordDeleted()
+    {
+        var record = new ReferralRecord { Id = 1, ReferrerId = 1, RefereeId = 2, ReferralStatus = "Pending" };
+        using var context = CreateContext();
+        var repository = new ReferralRepository(context);
+
+        await repository.DeleteReferralRecordAsync(record);
+
+        var deletedRecord = await context.ReferralRecords.FirstOrDefaultAsync(x => x.Id == record.Id);
+        deletedRecord.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task GivenARefereeId_WhenGetReferralRecordByRefereeId_ThenReturnReferralRecord()
+    {
+        var refereeId = 2;
+        using var context = CreateContext();
+        var repository = new ReferralRepository(context);
+
+        var result = await repository.GetReferralRecordByRefereeIdAsync(refereeId);
+
+        var expectedReferralRecord = new ReferralRecord { Id = 1, ReferrerId = 1, RefereeId = 2, ReferralStatus = "Pending" };
+        result.ShouldBeEquivalentTo(expectedReferralRecord);
+    }
+
+    [Fact]
+    public async Task GivenANonExistentRefereeId_WhenGetReferralRecordByRefereeId_ThenReturnNull()
+    {
+        var refereeId = 5;
+        using var context = CreateContext();
+        var repository = new ReferralRepository(context);
+
+        var result = await repository.GetReferralRecordByRefereeIdAsync(refereeId);
+
+        result.ShouldBeNull();
+    }
 }

@@ -14,14 +14,18 @@ public class ReferralsController(IReferralService referralsService) : Controller
     private readonly IReferralService _referralsService = referralsService;
 
     [HttpPost]
-    public async Task<ActionResult> PostAsync([FromBody] ReferralRecordRequest referralRecordRequest)
+    public async Task<ActionResult> PostAsync([FromBody] CreateReferralRecordRequest referralRecordRequest)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        await _referralsService.CreateReferralRecordAsync(referralRecordRequest);
+        var errorMessage = await _referralsService.CreateReferralRecordAsync(referralRecordRequest);
+        if (errorMessage != null)
+        {
+            return BadRequest(errorMessage);
+        }
 
         return Created();
     }
@@ -37,5 +41,39 @@ public class ReferralsController(IReferralService referralsService) : Controller
         }
 
         return response;
+    }
+
+    [HttpPut]
+    public async Task<ActionResult> PutAsync([FromBody] UpdateReferralRecordRequest updateReferralRecordRequest)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var errorMessage = await _referralsService.UpdateReferralRecordAsync(updateReferralRecordRequest);
+        if (errorMessage != null)
+        {
+            return BadRequest(errorMessage);
+        }
+
+        return NoContent();
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult> DeleteAsync([FromBody] DeleteReferralRecordRequest deleteReferralRecordRequest)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var errorMessage = await _referralsService.DeleteReferralRecordAsync(deleteReferralRecordRequest);
+        if (errorMessage != null)
+        {
+            return BadRequest(errorMessage);
+        }
+
+        return NoContent();
     }
 }

@@ -8,13 +8,13 @@ public class ReferralService(IReferralRepository referralRepository) : IReferral
 {
     private readonly IReferralRepository _referralRepository = referralRepository;
 
-    public async Task<bool> CreateReferralRecordAsync(ReferralRecordRequest request)
+    public async Task<string?> CreateReferralRecordAsync(CreateReferralRecordRequest request)
     {
         var referrer = await _referralRepository.GetUserByReferralCodeAsync(request.ReferralCode);
 
         if (referrer == null)
         {
-            return false;
+            return "Invalid Referral Code";
         }
 
         var requestData = new ReferralRecord
@@ -24,9 +24,26 @@ public class ReferralService(IReferralRepository referralRepository) : IReferral
             ReferralStatus = "Pending"
         };
 
-        return await _referralRepository.SaveReferralRecordAsync(requestData);
+        var saved = await _referralRepository.SaveReferralRecordAsync(requestData);
+        if (!saved)
+        {
+            return "No changes made";
+        }
+
+        return null;
     }
 
+    public async Task<string?> DeleteReferralRecordAsync(DeleteReferralRecordRequest request)
+    {
+        var record = await _referralRepository.GetReferralRecordByRefereeIdAsync(request.RefereeId);
+        if (record == null)
+        {
+            return "Invalid Referee Id";
+        }
+
+        await _referralRepository.DeleteReferralRecordAsync(record);
+        return null;
+    }
 
     public async Task<ReferralRecordResponse> GetReferralRecordsAsync(int userId)
     {
@@ -43,5 +60,18 @@ public class ReferralService(IReferralRepository referralRepository) : IReferral
             ReferralRecords = [.. records.ToList()]
         };
         return response;
+    }
+
+    public async Task<string?> UpdateReferralRecordAsync(UpdateReferralRecordRequest request)
+    {
+        var record = await _referralRepository.GetReferralRecordByRefereeIdAsync(request.RefereeId);
+        if (record == null)
+        {
+            return "Invalid Referee Id";
+        }
+
+        record.ReferralStatus = request.Status;
+        await _referralRepository.UpdateReferralRecordAsync(record);
+        return null;
     }
 }

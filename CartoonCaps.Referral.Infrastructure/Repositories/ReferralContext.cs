@@ -43,7 +43,15 @@ public class ReferralContext : DbContext
 
         modelBuilder.Entity<User>().HasData(
             new User { Id = 1, Name = "John Doe", ReferralCode = "ABC123" },
-            new User { Id = 2, Name = "Jane Smith", ReferralCode = "XYZ789" }
+            new User { Id = 2, Name = "Jane Smith", ReferralCode = "XYZ789" },
+            new User { Id = 3, Name = "Bob Johnson", ReferralCode = "DEF456" },
+            new User { Id = 4, Name = "Alice Williams", ReferralCode = "GHI789" },
+            new User { Id = 5, Name = "Tom Brown", ReferralCode = "JKL123" },
+            new User { Id = 6, Name = "Emily Davis", ReferralCode = "MNO456" },
+            new User { Id = 7, Name = "David Wilson", ReferralCode = "PQR789" },
+            new User { Id = 8, Name = "Olivia Taylor", ReferralCode = "STU123" },
+            new User { Id = 9, Name = "Jack Anderson", ReferralCode = "VWX456" },
+            new User { Id = 10, Name = "Grace Thomas", ReferralCode = "YZA789" }
         );
 
         modelBuilder.Entity<ReferralRecord>().HasData(
@@ -51,6 +59,20 @@ public class ReferralContext : DbContext
             {
                 Id = 1,
                 RefereeId = 2,
+                ReferrerId = 1,
+                ReferralStatus = "Pending"
+            },
+            new ReferralRecord
+            {
+                Id = 2,
+                RefereeId = 3,
+                ReferrerId = 1,
+                ReferralStatus = "Pending"
+            },
+            new ReferralRecord
+            {
+                Id = 3,
+                RefereeId = 4,
                 ReferrerId = 1,
                 ReferralStatus = "Pending"
             }

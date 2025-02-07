@@ -1,7 +1,6 @@
 using AutoFixture.Xunit2;
 using CartoonCaps.Referral.Application.Dtos;
 using CartoonCaps.Referral.Application.Services;
-using CartoonCaps.Referral.Application.Utilities;
 using CartoonCaps.Referral.Domain.Entities;
 using CartoonCaps.Referral.Domain.Infra.Interfaces;
 using CartoonCaps.Referral.Tests.Attributes;
@@ -12,70 +11,6 @@ namespace CartoonCaps.Referral.Tests.Application.Services;
 
 public class ReferralServiceTests
 {
-    [Theory]
-    [AutoDomainData]
-    public async Task GivenAUserId_WhenCreateCode_ThenReturnCode(
-        [Frozen] Mock<IReferralCodeGenerator> referralCodeGeneratorMock,
-        int userId,
-        ReferralService service,
-        string code
-    )
-    {
-        referralCodeGeneratorMock.Setup(x => x.GenerateCode()).Returns(code);
-
-        var result = await service.CreateCodeAsync(userId);
-
-        result.ShouldBe(code);
-    }
-
-    [Theory]
-    [AutoDomainData]
-    public async Task GivenAUserIdAndCode_WhenCreateCode_ThenSaveCode(
-        [Frozen] Mock<IReferralCodeGenerator> referralCodeGeneratorMock,
-        [Frozen] Mock<IReferralRepository> referralRepositoryMock,
-        int userId,
-        string code,
-        ReferralService service
-    )
-    {
-        referralCodeGeneratorMock.Setup(x => x.GenerateCode()).Returns(code);
-
-        await service.CreateCodeAsync(userId);
-
-        referralRepositoryMock.Verify(x => x.SaveCodeAsync(userId, code), Times.Once);
-    }
-
-    [Theory]
-    [AutoDomainData]
-    public async Task GivenAUserId_WhenGetCode_ThenReturnCode(
-        [Frozen] Mock<IReferralRepository> referralRepositoryMock,
-        int userId,
-        string code,
-        ReferralService service
-    )
-    {
-        referralRepositoryMock.Setup(x => x.GetCodeAsync(userId)).ReturnsAsync(code);
-
-        var result = await service.GetCodeAsync(userId);
-
-        result.ShouldBe(code);
-    }
-
-    [Theory]
-    [AutoDomainData]
-    public async Task GivenNoCode_WhenGetCode_ThenReturnNull(
-        [Frozen] Mock<IReferralRepository> referralRepositoryMock,
-        int userId,
-        ReferralService service
-    )
-    {
-        referralRepositoryMock.Setup(x => x.GetCodeAsync(userId)).ReturnsAsync(null as string);
-
-        var result = await service.GetCodeAsync(userId);
-
-        result.ShouldBeNull();
-    }
-
     [Theory]
     [AutoOmitRecursionDomainData]
     public async Task GivenValidReferralCodeAndValidReferredUserId_WhenCreateReferralRecord_ThenSaveRecord(

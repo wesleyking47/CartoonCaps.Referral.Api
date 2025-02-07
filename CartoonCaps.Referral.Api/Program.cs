@@ -1,13 +1,23 @@
 using CartoonCaps.Referral.Application.Services;
 using CartoonCaps.Referral.Domain.Infra.Interfaces;
 using CartoonCaps.Referral.Infrastructure.Repositories;
+using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddOpenApi("v1");
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        document.Servers.Clear();
+        document.Servers.Add(new OpenApiServer { Url = "http://localhost:8080" });
+
+        return Task.CompletedTask;
+    });
+});
 
 builder.Services.AddApiVersioning(options =>
     {

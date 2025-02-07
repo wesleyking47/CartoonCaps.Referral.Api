@@ -22,10 +22,10 @@ public class ReferralRepository(ReferralContext context) : IReferralRepository
         return user;
     }
 
-    public async Task SaveReferralRecordAsync(ReferralRecord referralDataRecord)
+    public async Task<bool> SaveReferralRecordAsync(ReferralRecord referralDataRecord)
     {
         _context.ReferralRecords.Add(referralDataRecord);
 
-        await _context.SaveChangesAsync();
+        return await _context.SaveChangesAsync() > 0;
     }
 }

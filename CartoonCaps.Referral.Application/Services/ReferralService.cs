@@ -8,9 +8,14 @@ public class ReferralService(IReferralRepository referralRepository) : IReferral
 {
     private readonly IReferralRepository _referralRepository = referralRepository;
 
-    public async Task CreateReferralRecordAsync(ReferralRecordRequest request)
+    public async Task<bool> CreateReferralRecordAsync(ReferralRecordRequest request)
     {
         var referrer = await _referralRepository.GetUserByReferralCodeAsync(request.ReferralCode);
+
+        if (referrer == null)
+        {
+            return false;
+        }
 
         var requestData = new ReferralRecord
         {
@@ -19,7 +24,7 @@ public class ReferralService(IReferralRepository referralRepository) : IReferral
             ReferralStatus = "Pending"
         };
 
-        await _referralRepository.SaveReferralRecordAsync(requestData);
+        return await _referralRepository.SaveReferralRecordAsync(requestData);
     }
 
 

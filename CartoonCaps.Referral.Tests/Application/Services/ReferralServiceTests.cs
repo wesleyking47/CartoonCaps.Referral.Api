@@ -41,6 +41,21 @@ public class ReferralServiceTests
 
     [Theory]
     [AutoOmitRecursionDomainData]
+    public async Task GivenNullUser_WhenCreateReferralRecord_ThenReturnFalse(
+        [Frozen] Mock<IReferralRepository> referralRepositoryMock,
+        ReferralRecordRequest referralRecordRequest,
+        ReferralService service
+    )
+    {
+        referralRepositoryMock.Setup(x => x.GetUserByReferralCodeAsync(referralRecordRequest.ReferralCode)).ReturnsAsync(null as User);
+
+        var result = await service.CreateReferralRecordAsync(referralRecordRequest);
+
+        result.ShouldBeFalse();
+    }
+
+    [Theory]
+    [AutoOmitRecursionDomainData]
     public async Task GivenAUserId_WhenGetReferralRecords_ThenReturnRecords(
         [Frozen] Mock<IReferralRepository> referralRepositoryMock,
         int userId,

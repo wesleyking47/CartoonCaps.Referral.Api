@@ -39,7 +39,7 @@ public class ReferralsControllerTests
         ReferralsController controller
     )
     {
-        referralServiceMock.Setup(x => x.CreateReferralRecordAsync(referralRecordRequest)).Returns(Task.CompletedTask);
+        referralServiceMock.Setup(x => x.CreateReferralRecordAsync(referralRecordRequest)).ReturnsAsync(true);
 
         var result = await controller.PostAsync(referralRecordRequest);
 

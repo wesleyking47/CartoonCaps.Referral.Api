@@ -5,5 +5,5 @@ namespace CartoonCaps.Referral.Application.Services;
 public interface IReferralService
 {
     Task<ReferralRecordResponse> GetReferralRecordsAsync(int userId);
-    Task CreateReferralRecordAsync(ReferralRecordRequest request);
+    Task<bool> CreateReferralRecordAsync(ReferralRecordRequest request);
 }

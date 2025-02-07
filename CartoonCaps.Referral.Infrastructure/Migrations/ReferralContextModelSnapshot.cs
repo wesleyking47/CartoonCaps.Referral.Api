@@ -50,6 +50,15 @@ namespace CartoonCaps.Referral.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("ReferralRecords");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            RefereeId = 2,
+                            ReferralStatus = "Pending",
+                            ReferrerId = 1
+                        });
                 });
 
             modelBuilder.Entity("CartoonCaps.Referral.Domain.Entities.User", b =>
@@ -74,6 +83,20 @@ namespace CartoonCaps.Referral.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "John Doe",
+                            ReferralCode = "ABC123"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Jane Smith",
+                            ReferralCode = "XYZ789"
+                        });
                 });
 
             modelBuilder.Entity("CartoonCaps.Referral.Domain.Entities.ReferralRecord", b =>

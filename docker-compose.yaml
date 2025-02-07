@@ -1,0 +1,32 @@
+services:
+  server:
+    build:
+      context: .
+      target: final
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Database=Referrals;Username=postgres;Password=Password1!
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: Referrals
+      POSTGRES_PASSWORD: Password1!
+    ports:
+      - "5432:5432"  # Expose the port to the host
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data:

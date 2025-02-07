@@ -10,7 +10,11 @@ public class ReferralRepository(ReferralContext context) : IReferralRepository
 
     public async Task<IEnumerable<ReferralRecord>?> GetReferralRecordsAsync(int userId)
     {
-        var records = await _context.ReferralRecords.Where(x => x.ReferrerId == userId).ToListAsync();
+        var records = await _context.ReferralRecords
+            .Where(x => x.ReferrerId == userId)
+            .Include(x => x.Referee)
+            .Include(x => x.Referrer)
+            .ToListAsync();
 
         return records;
     }

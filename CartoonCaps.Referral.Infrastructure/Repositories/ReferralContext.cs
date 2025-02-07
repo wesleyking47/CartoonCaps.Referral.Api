@@ -14,9 +14,10 @@ public class ReferralContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseNpgsql();
+            optionsBuilder.UseNpgsql(Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection"));
         }
     }
 
@@ -39,5 +40,20 @@ public class ReferralContext : DbContext
                 .WithMany(x => x.ReferrerRecords)
                 .HasForeignKey(x => x.ReferrerId);
         });
+
+        modelBuilder.Entity<User>().HasData(
+            new User { Id = 1, Name = "John Doe", ReferralCode = "ABC123" },
+            new User { Id = 2, Name = "Jane Smith", ReferralCode = "XYZ789" }
+        );
+
+        modelBuilder.Entity<ReferralRecord>().HasData(
+            new ReferralRecord
+            {
+                Id = 1,
+                RefereeId = 2,
+                ReferrerId = 1,
+                ReferralStatus = "Pending"
+            }
+        );
     }
 }

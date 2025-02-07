@@ -3,6 +3,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace CartoonCaps.Referral.Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -51,6 +53,20 @@ namespace CartoonCaps.Referral.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Name", "ReferralCode" },
+                values: new object[,]
+                {
+                    { 1, "John Doe", "ABC123" },
+                    { 2, "Jane Smith", "XYZ789" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ReferralRecords",
+                columns: new[] { "Id", "RefereeId", "ReferralStatus", "ReferrerId" },
+                values: new object[] { 1, 2, "Pending", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ReferralRecords_RefereeId",

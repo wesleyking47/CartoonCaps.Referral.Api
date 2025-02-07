@@ -5,11 +5,20 @@ namespace CartoonCaps.Referral.Infrastructure.Repositories;
 
 public class ReferralContext : DbContext
 {
+    public ReferralContext() { }
+
+    public ReferralContext(DbContextOptions<ReferralContext> options) : base(options) { }
+
     public DbSet<ReferralRecord> ReferralRecords { get; set; }
     public DbSet<User> Users { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
-        optionsBuilder.UseNpgsql();
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseNpgsql();
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

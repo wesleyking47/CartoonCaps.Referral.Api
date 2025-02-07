@@ -8,9 +8,11 @@ public class ReferralRepository(ReferralContext context) : IReferralRepository
 {
     private readonly ReferralContext _context = context;
 
-    public Task<string?> GetCodeAsync(int userId)
+    public async Task<string?> GetCodeAsync(int userId)
     {
-        return Task.FromResult<string?>(userId.ToString());
+        var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId);
+
+        return user?.ReferralCode;
     }
 
     public async Task<IEnumerable<ReferralRecord>?> GetReferralRecordsAsync(int userId)
@@ -20,18 +22,30 @@ public class ReferralRepository(ReferralContext context) : IReferralRepository
         return records;
     }
 
-    public Task<User> GetUserByReferralCodeAsync(string code)
+    public async Task<User?> GetUserByReferralCodeAsync(string code)
     {
-        throw new NotImplementedException();
+        var user = await _context.Users.SingleOrDefaultAsync(x => x.ReferralCode == code);
+
+        return user;
     }
 
-    public Task<bool> SaveCodeAsync(int userId, string code)
+    public async Task<bool> SaveCodeAsync(int userId, string code)
     {
-        throw new NotImplementedException();
+        var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null)
+        {
+            return false;
+        }
+        user.ReferralCode = code;
+
+        return await _context.SaveChangesAsync() > 0;
     }
 
-    public Task SaveReferralRecordAsync(ReferralRecord referralDataRecord)
+    public async Task SaveReferralRecordAsync(ReferralRecord referralDataRecord)
     {
-        throw new NotImplementedException();
+        _context.ReferralRecords.Add(referralDataRecord);
+
+        await _context.SaveChangesAsync();
     }
 }

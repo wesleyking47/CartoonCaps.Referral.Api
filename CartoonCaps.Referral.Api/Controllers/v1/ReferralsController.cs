@@ -7,13 +7,13 @@ namespace CartoonCaps.Referral.Api.Controllers.v1;
 
 [ApiVersion(1.0)]
 [ApiController]
-[ApiConventionType(typeof(DefaultApiConventions))]
 [Route("api/v{version:apiVersion}/[controller]")]
 public class ReferralsController(IReferralService referralsService) : ControllerBase
 {
     private readonly IReferralService _referralsService = referralsService;
 
     [HttpPost]
+    [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Create))]
     public async Task<ActionResult> PostAsync([FromBody] CreateReferralRecordRequest referralRecordRequest)
     {
         if (!ModelState.IsValid)
@@ -32,6 +32,7 @@ public class ReferralsController(IReferralService referralsService) : Controller
 
     [HttpGet]
     [Route("{userId}")]
+    [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
     public async Task<ActionResult<ReferralRecordResponse>> GetAsync([FromRoute] int userId)
     {
         var response = await _referralsService.GetReferralRecordsAsync(userId);
@@ -40,10 +41,11 @@ public class ReferralsController(IReferralService referralsService) : Controller
             return NotFound("Referral details not found.");
         }
 
-        return response;
+        return Ok(response);
     }
 
     [HttpPut]
+    [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Update))]
     public async Task<ActionResult> PutAsync([FromBody] UpdateReferralRecordRequest updateReferralRecordRequest)
     {
         if (!ModelState.IsValid)
@@ -54,18 +56,19 @@ public class ReferralsController(IReferralService referralsService) : Controller
         var errorMessage = await _referralsService.UpdateReferralRecordAsync(updateReferralRecordRequest);
         if (errorMessage != null)
         {
-            return BadRequest(errorMessage);
+            return NotFound(errorMessage);
         }
 
         return NoContent();
     }
 
     [HttpDelete]
+    [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
     public async Task<ActionResult> DeleteAsync([FromBody] DeleteReferralRecordRequest deleteReferralRecordRequest)
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
+            return NotFound(ModelState);
         }
 
         var errorMessage = await _referralsService.DeleteReferralRecordAsync(deleteReferralRecordRequest);

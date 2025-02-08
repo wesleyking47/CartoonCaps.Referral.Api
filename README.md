@@ -18,7 +18,7 @@ Carton Caps is an app that empowers consumers to raise money for the schools the
 
 1. Clone the repository:
     ```shell
-    git clone https://github.com/yourusername/CartoonCaps.Referral.Api.git
+    git clone https://github.com/wesleyking47/CartoonCaps.Referral.Api.git
     cd CartoonCaps.Referral.Api
     ```
 
@@ -34,7 +34,7 @@ Carton Caps is an app that empowers consumers to raise money for the schools the
 
 4. To view the API specification, navigate to:
     ```
-    /scalar
+    http://localhost:8080/scalar
     ```
 
 ## Usage Instructions

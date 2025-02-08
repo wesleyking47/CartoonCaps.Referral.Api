@@ -12,6 +12,7 @@ public class ReferralsController(IReferralService referralsService) : Controller
 {
     private readonly IReferralService _referralsService = referralsService;
 
+    [EndpointDescription("Create Referral Record")]
     [HttpPost]
     [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Create))]
     public async Task<ActionResult> PostAsync([FromBody] CreateReferralRecordRequest referralRecordRequest)
@@ -30,6 +31,7 @@ public class ReferralsController(IReferralService referralsService) : Controller
         return Created();
     }
 
+    [EndpointDescription("Get Referral Records")]
     [HttpGet]
     [Route("{userId}")]
     [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
@@ -44,6 +46,7 @@ public class ReferralsController(IReferralService referralsService) : Controller
         return Ok(response);
     }
 
+    [EndpointDescription("Update Referral Record")]
     [HttpPut]
     [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Update))]
     public async Task<ActionResult> PutAsync([FromBody] UpdateReferralRecordRequest updateReferralRecordRequest)
@@ -62,6 +65,7 @@ public class ReferralsController(IReferralService referralsService) : Controller
         return NoContent();
     }
 
+    [EndpointDescription("Delete Referral Record")]
     [HttpDelete]
     [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
     public async Task<ActionResult> DeleteAsync([FromBody] DeleteReferralRecordRequest deleteReferralRecordRequest)

@@ -8,7 +8,11 @@ Carton Caps is an app that empowers consumers to raise money for the schools the
 
 ### Prerequisites
 
-- Install the appropriate .NET SDK (version 9). You can download it from the [official .NET website](https://dotnet.microsoft.com/download).
+- Install Docker. You can download it from the [official Docker website](https://www.docker.com/get-started).
+- Install the .NET EF tool globally:
+    ```shell
+    dotnet tool install --global dotnet-ef
+    ```
 
 ### Steps
 
@@ -18,12 +22,17 @@ Carton Caps is an app that empowers consumers to raise money for the schools the
     cd CartoonCaps.Referral.Api
     ```
 
-2. Run the project using the .NET CLI:
+2. Build and run the Docker containers:
     ```shell
-    dotnet run --project .\CartoonCaps.Referral.Api\
+    docker compose up --build
     ```
 
-3. To view the API specification, navigate to:
+3. While the Docker container is running, apply the database migrations:
+    ```shell
+    dotnet ef database update --project ./CartoonCaps.Referral.Infrastructure --connection "Host=localhost;Database=Referrals;Username=postgres;Password=Password1!"
+    ```
+
+4. To view the API specification, navigate to:
     ```
     /scalar
     ```
@@ -112,10 +121,7 @@ Content-Type: application/json
 ## Technologies Used
 
 - .NET 9
-- Entity Framework Core 9
-- Scalar
-- ASP.NET API Versioning
-- OpenApi 
+- Docker
 
 ## Testing
 

@@ -8,15 +8,22 @@ public class ReferralRepository(ReferralContext context) : IReferralRepository
 {
     private readonly ReferralContext _context = context;
 
-    public async Task<IEnumerable<ReferralRecord>?> GetReferralRecordsAsync(int userId)
+    public async Task<IEnumerable<ReferralRecord>?> GetReferralRecordsAsync(int userId, bool includeReferees = false, bool includeReferrers = false)
     {
-        var records = await _context.ReferralRecords
-            .Where(x => x.ReferrerId == userId)
-            .Include(x => x.Referee)
-            .Include(x => x.Referrer)
-            .ToListAsync();
+        var records = _context.ReferralRecords
+            .Where(x => x.ReferrerId == userId);
 
-        return records;
+        if (includeReferees)
+        {
+            records = records.Include(x => x.Referee);
+        }
+
+        if (includeReferrers)
+        {
+            records = records.Include(x => x.Referrer);
+        }
+
+        return await records.ToListAsync();
     }
 
     public async Task<User?> GetUserByReferralCodeAsync(string code)

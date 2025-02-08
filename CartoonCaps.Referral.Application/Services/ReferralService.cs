@@ -47,7 +47,7 @@ public class ReferralService(IReferralRepository referralRepository) : IReferral
 
     public async Task<ReferralRecordResponse> GetReferralRecordsAsync(int userId)
     {
-        var recordsData = await _referralRepository.GetReferralRecordsAsync(userId);
+        var recordsData = await _referralRepository.GetReferralRecordsAsync(userId, true);
 
         var records = recordsData?.Select(x =>
             new ReferralRecordDto

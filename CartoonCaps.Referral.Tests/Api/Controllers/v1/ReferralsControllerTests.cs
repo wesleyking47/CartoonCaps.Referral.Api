@@ -95,8 +95,9 @@ public class ReferralsControllerTests
 
         var result = await controller.GetAsync(userId);
 
-        result.Value.ShouldNotBeNull();
-        result.Value.ReferralRecords.ShouldBe(referralRecordResponse.ReferralRecords);
+        var okResult = result.Result.ShouldBeOfType<OkObjectResult>();
+        var response = okResult.Value.ShouldBeOfType<ReferralRecordResponse>();
+        response.ReferralRecords.ShouldBe(referralRecordResponse.ReferralRecords);
     }
 
     [Theory]
@@ -146,8 +147,8 @@ public class ReferralsControllerTests
 
         var result = await controller.PutAsync(updateReferralRecordRequest);
 
-        var badRequestResult = result.ShouldBeOfType<BadRequestObjectResult>();
-        badRequestResult.Value.ShouldBe(errorMessage);
+        var notFoundResult = result.ShouldBeOfType<NotFoundObjectResult>();
+        notFoundResult.Value.ShouldBe(errorMessage);
     }
 
     [Theory]
@@ -197,7 +198,7 @@ public class ReferralsControllerTests
 
         var result = await controller.DeleteAsync(deleteReferralRecordRequest);
 
-        var badRequestResult = result.ShouldBeOfType<BadRequestObjectResult>();
-        badRequestResult.Value.ShouldBe(errorMessage);
+        var notFoundResult = result.ShouldBeOfType<NotFoundObjectResult>();
+        notFoundResult.Value.ShouldBe(errorMessage);
     }
 }

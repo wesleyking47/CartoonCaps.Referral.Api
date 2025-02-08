@@ -101,7 +101,7 @@ public class ReferralServiceTests
         IEnumerable<ReferralRecord> referralRecords
     )
     {
-        referralRepositoryMock.Setup(x => x.GetReferralRecordsAsync(userId)).ReturnsAsync(referralRecords);
+        referralRepositoryMock.Setup(x => x.GetReferralRecordsAsync(userId, true, false)).ReturnsAsync(referralRecords);
 
         var result = await service.GetReferralRecordsAsync(userId);
 
@@ -125,7 +125,7 @@ public class ReferralServiceTests
         ReferralService service
     )
     {
-        referralRepositoryMock.Setup(x => x.GetReferralRecordsAsync(userId)).ReturnsAsync(null as IEnumerable<ReferralRecord>);
+        referralRepositoryMock.Setup(x => x.GetReferralRecordsAsync(userId, false, false)).ReturnsAsync(null as IEnumerable<ReferralRecord>);
 
         var result = await service.GetReferralRecordsAsync(userId);
 

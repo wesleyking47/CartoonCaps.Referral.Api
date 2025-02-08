@@ -68,13 +68,13 @@ public class ReferralsController(IReferralService referralsService) : Controller
     {
         if (!ModelState.IsValid)
         {
-            return NotFound(ModelState);
+            return BadRequest(ModelState);
         }
 
         var errorMessage = await _referralsService.DeleteReferralRecordAsync(deleteReferralRecordRequest);
         if (errorMessage != null)
         {
-            return BadRequest(errorMessage);
+            return NotFound(errorMessage);
         }
 
         return NoContent();
